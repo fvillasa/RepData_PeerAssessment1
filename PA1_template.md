@@ -99,3 +99,19 @@ ggplot(activitysum.long, aes(date, value, fill=variable))+geom_bar(stat="identit
 ![](PA1_template_files/figure-html/impact of imputing missing data-1.png) 
 
 ## Are there differences in activity patterns between weekdays and weekends?
+
+```r
+library(lattice)
+newactivity <- activity
+newactivity[, "datetype"] <- as.factor(ifelse(grepl("Saturday|Sunday", weekdays(newactivity$date)), "weekend", "weekday"))
+newactivitymean <- aggregate(steps ~ interval + datetype, data = newactivity, mean)
+xyplot(newactivitymean$steps ~ newactivitymean$interval | newactivitymean$datetype, xlab = "Interval", ylab = "Number of steps", panel = function(x, y, ...) {
+     panel.xyplot(x, y, type = "l", ...)
+})
+```
+
+![](PA1_template_files/figure-html/comparing weekdays and weekends-1.png) 
+
+```r
+#axis(1, xaxp=c("0000", "2400", 24), las=2)
+```

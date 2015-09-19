@@ -82,3 +82,13 @@ ggplot(activitysum.long, aes(date, value, fill=variable))+geom_bar(stat="identit
 ```
 
 ## Are there differences in activity patterns between weekdays and weekends?
+``` {r comparing weekdays and weekends}
+library(lattice)
+newactivity <- activity
+newactivity[, "datetype"] <- as.factor(ifelse(grepl("Saturday|Sunday", weekdays(newactivity$date)), "weekend", "weekday"))
+newactivitymean <- aggregate(steps ~ interval + datetype, data = newactivity, mean)
+xyplot(newactivitymean$steps ~ newactivitymean$interval | newactivitymean$datetype, xlab = "Interval", ylab = "Number of steps", panel = function(x, y, ...) {
+     panel.xyplot(x, y, type = "l", ...)
+})
+#axis(1, xaxp=c("0000", "2400", 24), las=2)
+```
