@@ -90,10 +90,11 @@ The missing values imputation impacted the median calculation in -1.188679245282
 ```r
 library(reshape2)
 library(ggplot2)
+library(grid)
 activitysum <- aggregate(steps ~ date, data = activity, sum, na.action = NULL)
 activitysum[, "stepswonas"] <- aggregate(steps ~ date, data = activitywonas, sum)$steps
 activitysum.long <- melt(activitysum, id.vars="date")
-ggplot(activitysum.long, aes(date, value, fill=variable))+geom_bar(stat="identity",position="dodge") + scale_fill_discrete(name="date", labels=c("W/O Missing Values Imputation", "With Missing Values Imputation")) + labs(x = "Dates", y = "Steps Average")
+ggplot(activitysum.long, aes(date, value, fill=variable))+geom_bar(stat="identity",position="dodge") + scale_fill_discrete(name="Variable", labels=c("Original Values", "NA Values Imputation")) + labs(x = "Dates", y = "Steps Average") + theme(legend.position="left")
 ```
 
 ![](PA1_template_files/figure-html/impact of imputing missing data-1.png) 
@@ -105,13 +106,7 @@ library(lattice)
 newactivity <- activity
 newactivity[, "datetype"] <- as.factor(ifelse(grepl("Saturday|Sunday", weekdays(newactivity$date)), "weekend", "weekday"))
 newactivitymean <- aggregate(steps ~ interval + datetype, data = newactivity, mean)
-xyplot(newactivitymean$steps ~ newactivitymean$interval | newactivitymean$datetype, xlab = "Interval", ylab = "Number of steps", panel = function(x, y, ...) {
-     panel.xyplot(x, y, type = "l", ...)
-})
+xyplot(steps ~ interval | datetype, data = newactivitymean, main="Activity patterns between weekdays and weekends", xlab = "Interval", ylab = "Number of steps", layout=c(1,2),type="l")
 ```
 
 ![](PA1_template_files/figure-html/comparing weekdays and weekends-1.png) 
-
-```r
-#axis(1, xaxp=c("0000", "2400", 24), las=2)
-```
